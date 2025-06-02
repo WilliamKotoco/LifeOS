@@ -1,7 +1,9 @@
 use color_eyre::Result;
 use crossterm::event::{self, Event, KeyCode, KeyEvent, KeyEventKind, KeyModifiers};
+use ratatui::prelude::*;
 use ratatui::{
     DefaultTerminal, Frame,
+    layout::{Constraint, Direction},
     style::Stylize,
     text::Line,
     widgets::{Block, Paragraph},
@@ -49,6 +51,13 @@ impl App {
             .bold()
             .blue()
             .centered();
+
+        // create a split 50/50 layout horiontally
+
+        let layout = Layout::default()
+            .direction(Direction::Horizontal)
+            .constraints(vec![Constraint::Percentage(50), Constraint::Percentage(50)])
+            .split(frame.area());
         let text = "Hello, Ratatui!\n\n\
             Created using https://github.com/ratatui/templates\n\
             Press `Esc`, `Ctrl-C` or `q` to stop running.";
@@ -56,8 +65,17 @@ impl App {
             Paragraph::new(text)
                 .block(Block::bordered().title(title))
                 .centered(),
-            frame.area(),
-        )
+            layout[0],
+        );
+
+        let text = "testing second layout";
+
+        frame.render_widget(
+            Paragraph::new(text)
+                .block(Block::bordered().title("none"))
+                .centered(),
+            layout[1],
+        );
     }
 
     /// Reads the crossterm events and updates the state of [`App`].
